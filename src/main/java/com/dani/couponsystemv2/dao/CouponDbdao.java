@@ -2,9 +2,7 @@ package com.dani.couponsystemv2.dao;
 
 import com.dani.couponsystemv2.exceptions.DoesntExistException;
 import com.dani.couponsystemv2.model.CategoryType;
-import com.dani.couponsystemv2.model.Company;
 import com.dani.couponsystemv2.model.Coupon;
-import com.dani.couponsystemv2.model.Customer;
 import com.dani.couponsystemv2.repository.CompanyRepository;
 import com.dani.couponsystemv2.repository.CouponRepository;
 import com.dani.couponsystemv2.repository.CustomerRepository;
@@ -88,6 +86,10 @@ public class CouponDbdao implements CouponDao {
         return couponRepository.findByCompanyIdAndCategory(companyId,categoryDao.getOrCreate(categoryType));
     }
 
+    @Override
+    public List<Coupon> findByCustomersIdAndCategory(Long customerId, CategoryType categoryType) {
+        return couponRepository.findByCustomersIdAndCategory(customerId,categoryDao.getOrCreate(categoryType));
+    }
 
     @Override
     public Coupon addCouponPurchase(Long customerId, Long couponId) throws DoesntExistException {

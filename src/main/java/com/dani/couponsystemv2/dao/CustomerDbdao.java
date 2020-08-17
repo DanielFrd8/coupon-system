@@ -4,7 +4,6 @@ import com.dani.couponsystemv2.exceptions.DoesntExistException;
 import com.dani.couponsystemv2.model.Customer;
 import com.dani.couponsystemv2.repository.CustomerRepository;
 import lombok.AllArgsConstructor;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
@@ -65,6 +64,11 @@ public class CustomerDbdao implements CustomerDao {
     @Override
     public Optional<Customer> findById(Long id) {
         return repository.findById(id);
+    }
+
+    @Override
+    public Optional<Customer> findByEmailAndPassword(String email, String password) {
+        return repository.findByEmailAndPassword(email, md5Hex(password));
     }
 
     @Override

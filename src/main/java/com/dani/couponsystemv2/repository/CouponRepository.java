@@ -9,12 +9,13 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface CouponRepository extends CrudRepository<Coupon, Long> {
 
     List<Coupon> findByCompanyIdAndCategory(Long companyId, Category category);
+
+    List<Coupon> findByCustomersIdAndCategory(Long customerId,Category category);
 
     boolean existsByTitle(String title);
 

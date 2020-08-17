@@ -104,7 +104,7 @@ class CompanyTests {
     void getCompanyCoupons() {
         try {
             companyFacade.getCompanyCoupons().forEach(System.out::println);
-        } catch (LoggedOutException | DoesntExistException e) {
+        } catch (LoggedOutException  e) {
             e.printStackTrace();
         }
     }
@@ -122,7 +122,7 @@ class CompanyTests {
     void getCompanyCouponsByMaxPrice() {
         try {
             companyFacade.getCompanyCoupons(15).forEach(System.out::println);
-        } catch (LoggedOutException | DoesntExistException e) {
+        } catch (LoggedOutException e) {
             e.printStackTrace();
         }
     }
@@ -130,8 +130,7 @@ class CompanyTests {
     @Test
     void getCompanyDetails() {
         try {
-            companyFacade.getCompanyDetails()
-                    .ifPresent(System.out::println);
+            System.out.println(companyFacade.getCompanyDetails());
         } catch (LoggedOutException e) {
             e.printStackTrace();
         }

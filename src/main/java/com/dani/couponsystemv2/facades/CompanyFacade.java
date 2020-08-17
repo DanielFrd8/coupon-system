@@ -10,14 +10,10 @@ import com.dani.couponsystemv2.model.Company;
 import com.dani.couponsystemv2.model.Coupon;
 import com.dani.couponsystemv2.validation.CouponValidation;
 import lombok.Getter;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
-import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
 
 @Component
 public class CompanyFacade extends ClientFacade {
@@ -36,7 +32,7 @@ public class CompanyFacade extends ClientFacade {
     @Override
     public boolean login(String email, String password) {
         if (!companyDao.existsByEmailAndPassword(email, password)) return isLoggedIn;
-        Company company = companyDao.findByEmailAndPassword(email, md5Hex(password)).get();
+        Company company = companyDao.findByEmailAndPassword(email, password).get();
         companyId = company.getId();
         isLoggedIn = true;
         return isLoggedIn;
@@ -101,16 +97,9 @@ public class CompanyFacade extends ClientFacade {
         ));
     }
 
-    public List<Coupon> getCompanyCoupons() throws LoggedOutException, DoesntExistException {
+    public List<Coupon> getCompanyCoupons() throws LoggedOutException {
         if (!isLoggedIn) throw new LoggedOutException(LOGGED_OUT_MESSAGE);
-        return getCompanyDetails()
-                .map(company -> company.getCoupons())
-                .orElseThrow(() ->
-                        new DoesntExistException(
-                                "Company by the id " + companyId +
-                                        " does not exists in order to delete"
-                        )
-                );
+        return getCompanyDetails().getCoupons();
     }
 
     public List<Coupon> getCompanyCoupons(CategoryType category) throws LoggedOutException {
@@ -118,7 +107,7 @@ public class CompanyFacade extends ClientFacade {
         return couponDao.findByCompanyIdAndCategory(companyId,category);
     }
 
-    public List<Coupon> getCompanyCoupons(double maxPrice) throws LoggedOutException, DoesntExistException {
+    public List<Coupon> getCompanyCoupons(double maxPrice) throws LoggedOutException {
         if (!isLoggedIn) throw new LoggedOutException(LOGGED_OUT_MESSAGE);
         List<Coupon> coupons = new ArrayList<>();
         getCompanyCoupons().forEach(coupon -> {
@@ -129,8 +118,8 @@ public class CompanyFacade extends ClientFacade {
         return coupons;
     }
 
-    public Optional<Company> getCompanyDetails() throws LoggedOutException {
+    public Company getCompanyDetails() throws LoggedOutException {
         if (!isLoggedIn) throw new LoggedOutException(LOGGED_OUT_MESSAGE);
-        return companyDao.findById(companyId);
+        return companyDao.findById(companyId).get();
     }
 }

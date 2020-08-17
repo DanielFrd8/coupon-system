@@ -3,7 +3,6 @@ package com.dani.couponsystemv2.dao;
 import com.dani.couponsystemv2.exceptions.DoesntExistException;
 import com.dani.couponsystemv2.model.Company;
 import com.dani.couponsystemv2.repository.CompanyRepository;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Component;
@@ -33,7 +32,7 @@ public class CompanyDbdao implements CompanyDao {
 
     @Override
     public Optional<Company> findByEmailAndPassword(String email, String password) {
-        return repository.findByEmailAndPassword(email,password);
+        return repository.findByEmailAndPassword(email,md5Hex(password));
     }
 
     @Override
