@@ -23,5 +23,7 @@ public interface CustomerDao {
 
     Optional<Customer> findById(Long id);
 
-    boolean existByEmail(String email);
+    List<Customer> findByCouponsId(Long couponId);
+
+    boolean existsByEmail(String email);
 }

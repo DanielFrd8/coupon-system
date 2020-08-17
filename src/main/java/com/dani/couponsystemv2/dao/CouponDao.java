@@ -1,6 +1,7 @@
 package com.dani.couponsystemv2.dao;
 
 import com.dani.couponsystemv2.exceptions.DoesntExistException;
+import com.dani.couponsystemv2.model.Category;
 import com.dani.couponsystemv2.model.CategoryType;
 import com.dani.couponsystemv2.model.Coupon;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,10 @@ public interface CouponDao {
     List<Coupon> findAll();
 
     Optional<Coupon> findById(Long id);
+
+    boolean existsByTitle(String title);
+
+    List<Coupon> findByCompanyIdAndCategory(Long companyId, CategoryType categoryType);
 
     Coupon addCouponPurchase(Long customerId, Long couponId)
             throws DoesntExistException;

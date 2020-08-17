@@ -18,7 +18,7 @@ import static org.apache.commons.codec.digest.DigestUtils.*;
 @AllArgsConstructor
 @Primary
 @Component
-public class CustomerDbdao implements CustomerDao{
+public class CustomerDbdao implements CustomerDao {
 
     private final CustomerRepository repository;
 
@@ -46,12 +46,12 @@ public class CustomerDbdao implements CustomerDao{
     @Override
     public Customer deleteCustomer(Long id) throws DoesntExistException {
         return findById(id)
-                .map(byId -> {
-                    repository.delete(byId);
-                    return byId;
-                })
-                .orElseThrow(() -> new DoesntExistException(
-                        "Customer by the id " + id + " does not exist in order to delete"
+                .map(customer -> {
+                    repository.delete(customer);
+                    return customer;
+                }).orElseThrow(() -> new DoesntExistException(
+                        "Customer by the id " + id +
+                                " does not exists in order to delete"
                 ));
     }
 
@@ -68,7 +68,12 @@ public class CustomerDbdao implements CustomerDao{
     }
 
     @Override
-    public boolean existByEmail(String email) {
+    public List<Customer> findByCouponsId(Long couponId) {
+        return repository.findByCouponsId(couponId);
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
         return repository.existsByEmail(email);
     }
 }

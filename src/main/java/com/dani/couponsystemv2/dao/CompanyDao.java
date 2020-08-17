@@ -13,6 +13,8 @@ public interface CompanyDao {
 
     boolean existsByEmailAndPassword(String email, String password);
 
+    Optional<Company> findByEmailAndPassword(String email, String password);
+
     Company addCompany(Company company) throws IllegalStateException;
 
     Company updateCompany(Function<Company, Company> mapper, Long id)
@@ -24,7 +26,7 @@ public interface CompanyDao {
 
     Optional<Company> findById(Long id);
 
-    boolean existByName(String name);
+    boolean existsByName(String name);
 
-    boolean existByEmail(String email);
+    boolean existsByEmail(String email);
 }

@@ -1,8 +1,6 @@
 package com.dani.couponsystemv2.repository;
 
-import com.dani.couponsystemv2.model.Company;
-import com.dani.couponsystemv2.model.Coupon;
-import com.dani.couponsystemv2.model.Customer;
+import com.dani.couponsystemv2.model.*;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -10,14 +8,15 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface CouponRepository extends CrudRepository<Coupon, Long> {
 
-    Optional<Coupon> findByIdAndCustomersId(Long couponId,Long customerId);
-    boolean existsByIdAndCustomersId(Long couponId,Long customerId);
-    Optional<Coupon> findByIdAndCompanyId(Long couponId,Long companyId);
+    List<Coupon> findByCompanyIdAndCategory(Long companyId, Category category);
+
+    boolean existsByTitle(String title);
 
     @Override
     @Modifying

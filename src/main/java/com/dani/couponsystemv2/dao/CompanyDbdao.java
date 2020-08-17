@@ -32,6 +32,11 @@ public class CompanyDbdao implements CompanyDao {
     }
 
     @Override
+    public Optional<Company> findByEmailAndPassword(String email, String password) {
+        return repository.findByEmailAndPassword(email,password);
+    }
+
+    @Override
     public Company addCompany(Company company) throws IllegalStateException {
         company.setPassword(md5Hex(company.getPassword()));
         return repository.save(company);
@@ -40,7 +45,8 @@ public class CompanyDbdao implements CompanyDao {
     @Override
     public Company updateCompany(Function<Company, Company> mapper, Long id) throws DoesntExistException, IllegalStateException {
         return findById(id)
-                .map(byId -> mapper.andThen(repository::save).apply(byId)).orElseThrow(() -> new DoesntExistException(
+                .map(byId -> mapper.andThen(repository::save).apply(byId))
+                .orElseThrow(() -> new DoesntExistException(
                         "Company by the id " + id + " does not exist in order to update"
                 ));
     }
@@ -51,7 +57,7 @@ public class CompanyDbdao implements CompanyDao {
     public Company deleteCompany(Long id) throws DoesntExistException {
         return findById(id)
                 .map(byId -> {
-                    repository.deleteById(id);
+                    repository.delete(byId);
                     return byId;
                 })
                 .orElseThrow(() -> new DoesntExistException(
@@ -72,12 +78,12 @@ public class CompanyDbdao implements CompanyDao {
     }
 
     @Override
-    public boolean existByName(String name) {
+    public boolean existsByName(String name) {
         return repository.existsByName(name);
     }
 
     @Override
-    public boolean existByEmail(String email) {
+    public boolean existsByEmail(String email) {
         return repository.existsByEmail(email);
     }
 }

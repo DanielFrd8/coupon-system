@@ -31,7 +31,8 @@ class CompanyTests {
                         "yes",
                         "yes@no.com",
                         "223354"
-                ), new Company(
+                ),
+                new Company(
                         "bug",
                         "bug@bug.com",
                         "545454"
@@ -53,14 +54,14 @@ class CompanyTests {
     @Test
     void existByEmail() {
         System.out.println(
-                companyDao.existByEmail("yes@no.com")
+                companyDao.existsByEmail("yes@no.com")
         );
     }
 
     @Test
     void existByName() {
         System.out.println(
-                companyDao.existByName("bug")
+                companyDao.existsByName("bug")
         );
     }
 

@@ -2,8 +2,10 @@ package com.dani.couponsystemv2.facades;
 
 import com.dani.couponsystemv2.dao.CouponDao;
 import com.dani.couponsystemv2.exceptions.DoesntExistException;
+import com.dani.couponsystemv2.exceptions.LoggedOutException;
 import com.dani.couponsystemv2.model.Company;
 import com.dani.couponsystemv2.model.Coupon;
+import com.dani.couponsystemv2.model.Customer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,26 +37,147 @@ class AdminTests {
     }
 
     @Test
-    void addCompany(){
-        Stream.of(new Company(
-                "burger"
-                ,"bur@ger.com",
-                "123456")
-        ).map(adminFacade::addCompany)
-        .forEach(System.out::println);
+    void login() {
+
+        boolean isIt = adminFacade.login("admin@admin.com", "admin");
+        System.out.println(isIt);
+        System.out.println(adminFacade.isLoggedIn());
     }
 
     @Test
-    void updateCompany(){
-        Company company = new Company(
-                "burger"
-                ,"bur@ger.com",
-                "123456");
-        company.setId(5L);
+    void addCompany() {
         try {
-            adminFacade.updateCompany(company);
+            Company added = adminFacade.addCompany(new Company(
+                    "Leumi",
+                    "leu@mi.com",
+                    "123123"
+            ));
+            System.out.println(added);
+        } catch (LoggedOutException e) {
+            e.printStackTrace();
+        } catch (IllegalStateException e) {
+            Stream.of(e.getSuppressed())
+                    .map(Throwable::getMessage)
+                    .forEach(System.out::println);
+        }
+    }
+
+    @Test
+    void updateCompany() {
+
+        try {
+            Company updated = adminFacade.updateCompany(
+                    "burgers@bar.com", "123456", 9L
+            );
+            System.out.println(updated);
+        } catch (LoggedOutException e) {
+            e.printStackTrace();
         } catch (DoesntExistException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
+        } catch (IllegalStateException e) {
+            Stream.of(e.getSuppressed())
+                    .map(Throwable::getMessage)
+                    .forEach(System.out::println);
+        }
+    }
+
+    @Test
+    void deleteCompany() {
+        try {
+            Company deleted = adminFacade.deleteCompany(3L);
+            System.out.println(deleted);
+        } catch (LoggedOutException | DoesntExistException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    void findAllCompanies() {
+        try {
+            adminFacade.getAllCompanies().forEach(System.out::println);
+        } catch (LoggedOutException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    void findOneCompany() {
+        try {
+            adminFacade.getOneCompany(8L)
+                    .ifPresent(System.out::println);
+        } catch (LoggedOutException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    void addCustomer() {
+        try {
+            System.out.println(
+                    adminFacade.addCustomer(new Customer(
+                            "sonya",
+                            "wins",
+                            "sonya@wins.com",
+                            "123478"
+                    )));
+        } catch (LoggedOutException e) {
+            e.printStackTrace();
+        } catch (IllegalStateException e) {
+            Stream.of(e.getSuppressed())
+                    .map(Throwable::getMessage)
+                    .forEach(System.out::println);
+        }
+    }
+
+    @Test
+    void updateCustomer(){
+        try {
+            Customer updated = adminFacade.updateCustomer(
+                    new Customer(
+                            5L,
+                            "sonya",
+                            "wins",
+                            "sonya@wins.com",
+                            "12334"
+                    )
+            );
+            System.out.println(updated);
+        } catch (LoggedOutException e) {
+            e.printStackTrace();
+        } catch (DoesntExistException e) {
+            e.printStackTrace();
+        } catch (IllegalStateException e) {
+            Stream.of(e.getSuppressed())
+                    .map(Throwable::getMessage)
+                    .forEach(System.out::println);
+        }
+    }
+
+    @Test
+    void deleteCustomer(){
+        try {
+            Customer deleted = adminFacade.deleteCustomer(10L);
+            System.out.println(deleted);
+        } catch (LoggedOutException | DoesntExistException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    void getAllCustomers(){
+        try {
+            adminFacade.getAllCustomers().forEach(System.out::println);
+        } catch (LoggedOutException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    void getOneCustomer(){
+        try {
+            adminFacade.getOneCustomer(4L).ifPresent(System.out::println);
+        } catch (LoggedOutException e) {
+            e.printStackTrace();
         }
     }
 }

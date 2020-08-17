@@ -15,9 +15,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Primary
@@ -54,13 +56,14 @@ public class CouponDbdao implements CouponDao {
     @Transactional
     @Override
     public Coupon deleteCoupon(Long couponId, Long companyId) throws DoesntExistException {
-        return couponRepository.findByIdAndCompanyId(couponId, companyId)
-                .map(byId -> {
-                    couponRepository.deleteById(byId.getId());
-                    return byId;
-                }).orElseThrow(() -> new DoesntExistException(
-                        "Coupon by the id " + couponId + " does not exist in order to delete"
-                ));
+        return findById(couponId).map(coupon -> {
+            couponRepository.deleteById(couponId);
+            return coupon;
+        }).orElseThrow(() -> new DoesntExistException(
+                        "Coupon by the id " + couponId +
+                                "doesnt exists in order to delete"
+                )
+        );
     }
 
     @Override
@@ -75,40 +78,62 @@ public class CouponDbdao implements CouponDao {
         return couponRepository.findById(id);
     }
 
+    @Override
+    public boolean existsByTitle(String title) {
+        return couponRepository.existsByTitle(title);
+    }
+
+    @Override
+    public List<Coupon> findByCompanyIdAndCategory(Long companyId, CategoryType categoryType) {
+        return couponRepository.findByCompanyIdAndCategory(companyId,categoryDao.getOrCreate(categoryType));
+    }
+
 
     @Override
     public Coupon addCouponPurchase(Long customerId, Long couponId) throws DoesntExistException {
-        Customer customer = isCustomerExists(customerId);
-        Coupon coupon = isCouponExists(couponId);
-        customer.getCoupons().add(coupon);
-        customerRepository.save(customer);
-        coupon.getCustomers().add(customer);
-        return coupon;
+        return findById(couponId).map(coupon ->
+                customerRepository.findById(customerId).map(customer ->  {
+                    List<Coupon> customerCoupons = customer.getCoupons();
+                    if (!customerCoupons.contains(coupon)) {
+                        customerCoupons.add(coupon);
+                        customer.setCoupons(customerCoupons);
+                        customerRepository.save(customer);
+                        return coupon;
+                    }
+                    return coupon;
+                }).orElse(null))
+                .orElseThrow(() -> new DoesntExistException(
+                        "Coupon or Customer by: " +
+                                new HashMap<String, Long>(){{
+                                    put("Customer ID", customerId);
+                                    put("Coupon ID", couponId);
+                                }}
+                                +
+                                "doesnt exists in order to purchase"
+                ));
     }
 
     @Modifying
     @Transactional
     @Override
     public Coupon removeCouponPurchase(Long customerId, Long couponId) throws DoesntExistException {
-        Customer customer = isCustomerExists(customerId);
-        Coupon coupon = isCouponExists(couponId);
-        customer.getCoupons().remove(coupon);
-        customerRepository.save(customer);
-        coupon.getCustomers().remove(customer);
-        return coupon;
-    }
-
-    private Customer isCustomerExists(Long id) throws DoesntExistException {
-        return customerRepository.findById(id)
-                .orElseThrow(() ->
-                        new DoesntExistException("The customer with id: " + id + "does not exists")
-                );
-    }
-
-    private Coupon isCouponExists(Long id) throws DoesntExistException{
-        return couponRepository.findById(id).orElseThrow(() ->
-                new DoesntExistException(
-                        "Coupon with the id: " +id + " does not exist")
-        );
+        return customerRepository.findById(customerId).map(customer -> {
+            customer.setCoupons(
+                    customer.getCoupons()
+                            .stream()
+                            .filter(c -> !c.getId().equals(couponId))
+                            .collect(Collectors.toList())
+            );
+            customerRepository.save(customer);
+            return findById(couponId).orElse(null);
+        }).orElseThrow(() -> new DoesntExistException(
+                "Coupon or Customer by: " +
+                        new HashMap<String, Long>(){{
+                            put("Customer ID", customerId);
+                            put("Coupon ID", couponId);
+                        }}
+                        +
+                        "doesnt exists in order to remove purchase"
+        ));
     }
 }

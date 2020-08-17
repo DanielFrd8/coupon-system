@@ -78,7 +78,7 @@ class CouponTests {
     @Test
     void addCustomerCoupon(){
         try {
-            Coupon coupon = couponDao.addCouponPurchase(3L,1L);
+            Coupon coupon = couponDao.addCouponPurchase(5L,3L);
             System.out.println(coupon);
         } catch (DoesntExistException e) {
             System.out.println(e.getMessage());

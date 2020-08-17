@@ -57,7 +57,7 @@ class CustomerTests {
     @Test
     void existByEmail() {
         System.out.println(
-                customerDao.existByEmail("yes@no.com")
+                customerDao.existsByEmail("yes@no.com")
         );
     }
 
@@ -65,6 +65,13 @@ class CustomerTests {
     void findById() {
         System.out.println(
                 customerDao.findById(4L)
+        );
+    }
+
+    @Test
+    void findByCouponsId() {
+        System.out.println(
+                customerDao.findByCouponsId(4L)
         );
     }
 
