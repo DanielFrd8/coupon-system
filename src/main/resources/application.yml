@@ -10,6 +10,8 @@ spring:
     password: root
     driver-class-name: com.mysql.jdbc.Driver
 
+secret: RpV9dJVf5HJMG7E8iDGTSD+nFcK9e+OfreUUaZu+9vw
+
 admin-email: admin@admin.com
 admin-password: admin
 

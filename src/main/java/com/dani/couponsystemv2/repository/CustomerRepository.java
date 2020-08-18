@@ -14,6 +14,8 @@ public interface CustomerRepository extends CrudRepository<Customer, Long> {
 
     boolean existsByEmailAndPassword(String email,String password);
 
+    Optional<Customer> findByEmail(String email);
+
     Optional<Customer> findByEmailAndPassword(String email,String password);
 
     List<Customer> findByCouponsId(Long couponId);

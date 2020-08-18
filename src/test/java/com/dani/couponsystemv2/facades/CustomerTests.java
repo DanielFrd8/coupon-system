@@ -84,7 +84,7 @@ class CustomerTests {
     }
 
     @Test
-    void getCompanyDetails() {
+    void getCustomerDetails() {
         try {
             System.out.println(customerFacade.getCustomerDetails());
         } catch (LoggedOutException e) {

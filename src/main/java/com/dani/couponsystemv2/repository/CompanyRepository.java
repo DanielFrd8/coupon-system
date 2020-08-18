@@ -21,6 +21,8 @@ public interface CompanyRepository extends CrudRepository<Company, Long> {
 
     boolean existsByEmail(String email);
 
+    Optional<Company> findByEmail(String email);
+
     @Override
     @Modifying
     @Transactional
