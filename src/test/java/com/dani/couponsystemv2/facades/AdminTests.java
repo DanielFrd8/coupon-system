@@ -9,6 +9,7 @@ import com.dani.couponsystemv2.model.Customer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
@@ -22,9 +23,15 @@ class AdminTests {
     @Autowired
     private AdminFacade adminFacade;
 
+    @Value("${admin-email}")
+    public String username;
+
+    @Value("${admin-password}")
+    public String password;
+
     @BeforeEach
     void init() {
-        boolean isLoggedIn = adminFacade.login("admin@admin.com", "admin");
+        boolean isLoggedIn = adminFacade.login(username, password);
     }
 
     @Test

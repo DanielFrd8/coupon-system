@@ -40,6 +40,10 @@ public class JwtService {
         return encodeJwt(t, COMPANY);
     }
 
+    public <T extends UserEntity> String encodeCustomer(T t) {
+        return encodeJwt(t, CUSTOMER);
+    }
+
     public <T extends UserEntity> String encodeAdmin(T t) {
         t.setId(0L);
         return encodeJwt(t, ADMIN);
