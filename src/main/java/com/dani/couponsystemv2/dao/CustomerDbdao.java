@@ -56,9 +56,7 @@ public class CustomerDbdao implements CustomerDao {
 
     @Override
     public List<Customer> findAll() {
-        List<Customer> customers = new ArrayList<>();
-        repository.findAll().forEach(customers::add);
-        return customers;
+        return repository.findAll();
     }
 
     @Override

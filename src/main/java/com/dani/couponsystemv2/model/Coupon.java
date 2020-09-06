@@ -12,49 +12,56 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
 @Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "coupon")
 public class Coupon extends BaseEntity {
 
+    @Getter
     @NotEmpty
     @Length(min = 2, max = 30)
     @Column(name = "title", nullable = false, unique = true)
     private String title;
 
+    @Getter
     @NotNull
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
+    @Getter
     @NotNull
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 
+    @Getter
     @Column(name = "amount", nullable = false)
     private int amount;
 
+    @Getter
     @Column(name = "price", nullable = false)
     private double price;
 
+    @Getter
     @NotEmpty
     @Lob
     @Column(name = "image")
     private String image;
 
+    @Getter
     @Lob
     @Column(name = "description")
     private String description;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "coupons")
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "coupons")
     private List<Customer> customers = new ArrayList<>();
 
+    @Getter
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
@@ -82,5 +89,9 @@ public class Coupon extends BaseEntity {
                 ", image='" + image + '\'' +
                 ", description='" + description +
                 '}';
+    }
+
+    public List<Customer> customerList(){
+        return customers;
     }
 }

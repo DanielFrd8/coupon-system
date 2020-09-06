@@ -66,9 +66,7 @@ public class CouponDbdao implements CouponDao {
 
     @Override
     public List<Coupon> findAll() {
-        List<Coupon> coupons = new ArrayList<>();
-        couponRepository.findAll().forEach(coupons::add);
-        return coupons;
+        return couponRepository.findAll();
     }
 
     @Override

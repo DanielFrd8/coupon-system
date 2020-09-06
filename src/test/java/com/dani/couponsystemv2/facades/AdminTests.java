@@ -110,9 +110,8 @@ class AdminTests {
     @Test
     void findOneCompany() {
         try {
-            adminFacade.getOneCompany(8L)
-                    .ifPresent(System.out::println);
-        } catch (LoggedOutException e) {
+            System.out.println(adminFacade.getOneCompany(8L));
+        } catch (LoggedOutException | DoesntExistException e) {
             e.printStackTrace();
         }
     }
@@ -182,8 +181,8 @@ class AdminTests {
     @Test
     void getOneCustomer(){
         try {
-            adminFacade.getOneCustomer(4L).ifPresent(System.out::println);
-        } catch (LoggedOutException e) {
+            System.out.println(adminFacade.getOneCustomer(4L));
+        } catch (LoggedOutException | DoesntExistException e) {
             e.printStackTrace();
         }
     }

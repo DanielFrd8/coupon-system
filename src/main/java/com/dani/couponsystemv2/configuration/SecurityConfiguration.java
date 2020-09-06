@@ -40,7 +40,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests().antMatchers(
-                        "customer/authenticate",
+                "/customer/authenticate",
                 "/company/authenticate",
                 "/admin/authenticate"
         ).permitAll()

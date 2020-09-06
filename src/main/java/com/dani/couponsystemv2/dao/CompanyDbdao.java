@@ -66,9 +66,7 @@ public class CompanyDbdao implements CompanyDao {
 
     @Override
     public List<Company> findAll() {
-        List<Company> companies = new ArrayList<>();
-        repository.findAll().iterator().forEachRemaining(companies::add);
-        return companies;
+        return repository.findAll();
     }
 
     @Override

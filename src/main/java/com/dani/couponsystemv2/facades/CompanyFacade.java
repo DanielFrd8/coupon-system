@@ -74,7 +74,7 @@ public class CompanyFacade extends ClientFacade {
     public Coupon deleteCoupon(Long couponId) throws LoggedOutException, DoesntExistException {
         if (!isLoggedIn) throw new LoggedOutException(LOGGED_OUT_MESSAGE);
         return couponDao.findById(couponId).map(coupon -> {
-            coupon.getCustomers()
+            coupon.customerList()
                     .forEach(customer -> {
                         try {
                             couponDao.removeCouponPurchase(

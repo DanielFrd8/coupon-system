@@ -35,7 +35,7 @@ class CouponTests {
                 "free basket-ball game"
         );
         try {
-            System.out.println(couponDao.addCoupon(coupon,3L,CategoryType.SPORT));
+            System.out.println(couponDao.addCoupon(coupon,5L,CategoryType.SPORT));
         } catch (DoesntExistException e) {
             System.out.println(e.getMessage());
         }
@@ -78,7 +78,7 @@ class CouponTests {
     @Test
     void addCustomerCoupon(){
         try {
-            Coupon coupon = couponDao.addCouponPurchase(5L,3L);
+            Coupon coupon = couponDao.addCouponPurchase(4L,1L);
             System.out.println(coupon);
         } catch (DoesntExistException e) {
             System.out.println(e.getMessage());

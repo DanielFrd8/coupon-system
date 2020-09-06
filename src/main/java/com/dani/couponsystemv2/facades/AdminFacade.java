@@ -11,8 +11,10 @@ import com.dani.couponsystemv2.validation.CompanyValidation;
 import com.dani.couponsystemv2.validation.CustomerValidation;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
@@ -33,7 +35,7 @@ public class AdminFacade extends ClientFacade {
     private boolean isLoggedIn = false;
 
     public AdminFacade(CompanyDao companyDao, CouponDao couponDao, CustomerDao customerDao, CompanyValidation companyValidation, CustomerValidation customerValidation) {
-        super(companyDao, couponDao,customerDao);
+        super(companyDao, couponDao, customerDao);
         this.companyValidation = companyValidation;
         this.customerValidation = customerValidation;
     }
@@ -52,7 +54,7 @@ public class AdminFacade extends ClientFacade {
         );
     }
 
-    public Company updateCompany(String email, String password, Long companyId) throws LoggedOutException, DoesntExistException {
+    public Company updateCompany(String email, String password, Long companyId) throws LoggedOutException, DoesntExistException, IllegalStateException {
         if (!isLoggedIn) throw new LoggedOutException(LOGGED_OUT_MESSAGE);
         return companyDao.updateCompany(company -> {
             company.setEmail(email);
@@ -61,9 +63,9 @@ public class AdminFacade extends ClientFacade {
                     .andThen(c -> {
                         try {
                             if (company.getId() == companyId &&
-                                    company.getEmail().equals(getOneCompany(companyId).get().getEmail()))
+                                    company.getEmail().equals(getOneCompany(companyId).getEmail()))
                                 return company;
-                        } catch (LoggedOutException e) {
+                        } catch (LoggedOutException | DoesntExistException e) {
                             e.printStackTrace();
                         }
                         return companyValidation.validateEmailExistence.apply(c);
@@ -99,14 +101,20 @@ public class AdminFacade extends ClientFacade {
         ));
     }
 
-    public Iterable<Company> getAllCompanies() throws LoggedOutException {
+    public List<Company> getAllCompanies() throws LoggedOutException {
         if (!isLoggedIn) throw new LoggedOutException(LOGGED_OUT_MESSAGE);
-        return companyDao.findAll();
+        List<Company> companies = companyDao.findAll();
+//        companies.forEach(company -> company.getCoupons().forEach(coupon -> coupon.setCompany(null)));
+//        companies.forEach(company -> company.getCoupons().forEach(coupon -> coupon.getCustomers().forEach(customer -> customer.setCoupons(null))));
+        return companies;
     }
 
-    public Optional<Company> getOneCompany(Long id) throws LoggedOutException {
+    public Company getOneCompany(Long id) throws LoggedOutException, DoesntExistException {
         if (!isLoggedIn) throw new LoggedOutException(LOGGED_OUT_MESSAGE);
-        return companyDao.findById(id);
+        Company company = companyDao.findById(id).orElseThrow(() -> new DoesntExistException( "The company with id " + id + " does not exist"));
+//        company.getCoupons().forEach(coupon -> coupon.setCompany(null));
+//        company.getCoupons().forEach(coupon -> coupon.getCustomers().forEach(customer -> customer.setCoupons(null)));
+        return company;
     }
 
     public Customer addCustomer(Customer customer) throws LoggedOutException, IllegalStateException {
@@ -131,9 +139,9 @@ public class AdminFacade extends ClientFacade {
                     .andThen(cust -> {
                         try {
                             if (cust.getId() == customer.getId() &&
-                                    cust.getEmail().equals(getOneCustomer(customer.getId()).get().getEmail()))
+                                    cust.getEmail().equals(getOneCustomer(customer.getId()).getEmail()))
                                 return cust;
-                        } catch (LoggedOutException e) {
+                        } catch (LoggedOutException | DoesntExistException e) {
                             e.printStackTrace();
                         }
                         return customerValidation.validateExistence.apply(cust);
@@ -163,14 +171,23 @@ public class AdminFacade extends ClientFacade {
         ));
     }
 
-    public Iterable<Customer> getAllCustomers() throws LoggedOutException {
+    public List<Customer> getAllCustomers() throws LoggedOutException {
         if (!isLoggedIn) throw new LoggedOutException(LOGGED_OUT_MESSAGE);
-        return customerDao.findAll();
+        List<Customer> customers = customerDao.findAll();
+//        customers.forEach(customer -> customer.getCoupons().forEach(coupon -> coupon.getCompany().setCoupons(null)));
+//        customers.forEach(customer -> customer.getCoupons().forEach(coupon -> coupon.setCustomers(null)));
+        return customers;
     }
 
-    public Optional<Customer> getOneCustomer(Long id) throws LoggedOutException {
+    public Customer getOneCustomer(Long id) throws LoggedOutException, DoesntExistException {
         if (!isLoggedIn) throw new LoggedOutException(LOGGED_OUT_MESSAGE);
-        return customerDao.findById(id);
+        Customer customer = customerDao.findById(id).orElseThrow(() ->
+                new DoesntExistException(
+                        "The customer with id " + id + " does not exist"
+                ));
+//        customer.getCoupons().forEach(coupon -> coupon.getCompany().setCoupons(null));
+//        customer.getCoupons().forEach(coupon -> coupon.setCustomers(null));
+        return customer;
     }
 
 }
