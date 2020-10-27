@@ -38,7 +38,7 @@ public class CompanyFacade extends ClientFacade {
         return isLoggedIn;
     }
 
-    public Coupon addCoupon(Coupon coupon, CategoryType category) throws LoggedOutException, DoesntExistException {
+    public Coupon addCoupon(Coupon coupon, CategoryType category) throws LoggedOutException, DoesntExistException, IllegalStateException {
         if (!isLoggedIn) throw new LoggedOutException(LOGGED_OUT_MESSAGE);
         return couponDao.addCoupon(
                 couponValidation.
@@ -50,7 +50,7 @@ public class CompanyFacade extends ClientFacade {
         );
     }
 
-    public Coupon updateCoupon(Coupon coupon) throws LoggedOutException, DoesntExistException {
+    public Coupon updateCoupon(Coupon coupon) throws LoggedOutException, DoesntExistException,IllegalStateException {
         if (!isLoggedIn) throw new LoggedOutException(LOGGED_OUT_MESSAGE);
         return couponDao.updateCoupon(c -> {
             c.setTitle(coupon.getTitle());

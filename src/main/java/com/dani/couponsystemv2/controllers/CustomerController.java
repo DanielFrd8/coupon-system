@@ -5,7 +5,7 @@ import com.dani.couponsystemv2.dto.LoginDto;
 import com.dani.couponsystemv2.dto.ResponseDto;
 import com.dani.couponsystemv2.exceptions.DoesntExistException;
 import com.dani.couponsystemv2.exceptions.LoggedOutException;
-import com.dani.couponsystemv2.facades.CompanyFacade;
+import com.dani.couponsystemv2.facades.CustomerFacade;
 import com.dani.couponsystemv2.model.CategoryType;
 import com.dani.couponsystemv2.model.Coupon;
 import com.dani.couponsystemv2.model.UserEntity;
@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
-@RequestMapping("/company")
-public class CompanyController extends ClientController {
+@RequestMapping("/customer")
+public class CustomerController extends ClientController {
 
-    private final CompanyFacade facade;
+    private final CustomerFacade facade;
 
-    public CompanyController(AuthenticationManager authenticationManager, JwtService jwtService, CompanyFacade facade) {
+    public CustomerController(AuthenticationManager authenticationManager, JwtService jwtService, CustomerFacade facade) {
         super(authenticationManager, jwtService);
         this.facade = facade;
     }
@@ -50,52 +50,30 @@ public class CompanyController extends ClientController {
         return ResponseEntity.ok(
                 ResponseDto.of(
                         facade.login(loginDto.getEmail(), loginDto.getPassword()),
-                        jwtService.encodeCompany(
+                        jwtService.encodeCustomer(
                                 new UserEntity(loginDto.getEmail(), loginDto.getPassword())
                         )));
     }
 
-    @PostMapping("/coupon/add/{category}")
-    public ResponseEntity addCoupon(@RequestBody Coupon coupon,@PathVariable("category") CategoryType category){
+    @PostMapping("/purchase")
+    public ResponseEntity purchaseCoupon(@RequestBody Coupon coupon) {
         try {
-            return ResponseEntity.ok(ResponseDto.success(facade.addCoupon(coupon,category)));
-        } catch (LoggedOutException | DoesntExistException e) {
-            return ResponseEntity.ok(ResponseDto.failure(e.getMessage()));
-        } catch (IllegalStateException e){
-            return ResponseEntity.ok(ResponseDto.failure(e));
-        }
-    }
-
-    @PutMapping("/coupon/update")
-    public ResponseEntity updateCoupon(@RequestBody Coupon coupon){
-        try {
-            return ResponseEntity.ok(ResponseDto.success(facade.updateCoupon(coupon)));
-        } catch (LoggedOutException | DoesntExistException e) {
-            return ResponseEntity.ok(ResponseDto.failure(e.getMessage()));
-        } catch (IllegalStateException e){
-            return ResponseEntity.ok(ResponseDto.failure(e));
-        }
-    }
-
-    @DeleteMapping("/coupon/delete/{id}")
-    public ResponseEntity deleteCoupon(@PathVariable Long id){
-        try {
-            return ResponseEntity.ok(ResponseDto.success(facade.deleteCoupon(id)));
+            return ResponseEntity.ok(ResponseDto.success(facade.purchaseCoupon(coupon)));
         } catch (LoggedOutException | DoesntExistException e) {
             return ResponseEntity.ok(ResponseDto.failure(e.getMessage()));
         }
     }
 
-    @GetMapping("/coupon/all")
-    public ResponseEntity getCoupons(@RequestParam(value = "maxPrice",required = false) Double maxPrice,
-                                     @RequestParam(value = "category", required = false) CategoryType type){
+    @GetMapping("/coupons")
+    public ResponseEntity getCustomerCoupons(@RequestParam(value = "maxPrice", required = false) Double maxPrice,
+                                             @RequestParam(value = "category", required = false) CategoryType type) {
         try {
             if (maxPrice != null){
-                return ResponseEntity.ok(ResponseDto.success(facade.getCompanyCoupons(maxPrice)));
+                return ResponseEntity.ok(ResponseDto.success(facade.getCustomerCoupons(maxPrice)));
             }else if (type != null) {
-                return ResponseEntity.ok(ResponseDto.success(facade.getCompanyCoupons(type)));
+                return ResponseEntity.ok(ResponseDto.success(facade.getCustomerCoupons(type)));
             }else{
-                return ResponseEntity.ok(ResponseDto.success(facade.getCompanyCoupons()));
+                return ResponseEntity.ok(ResponseDto.success(facade.getCustomerCoupons()));
             }
         } catch (LoggedOutException e) {
             return ResponseEntity.ok(ResponseDto.failure(e.getMessage()));
@@ -103,9 +81,9 @@ public class CompanyController extends ClientController {
     }
 
     @GetMapping("/details")
-    public ResponseEntity getCompanyDetails(){
+    public ResponseEntity getCustomerDetails() {
         try {
-            return ResponseEntity.ok(ResponseDto.success(facade.getCompanyDetails()));
+            return ResponseEntity.ok(ResponseDto.success(facade.getCustomerDetails()));
         } catch (LoggedOutException e) {
             return ResponseEntity.ok(ResponseDto.failure(e.getMessage()));
         }

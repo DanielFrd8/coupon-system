@@ -45,8 +45,8 @@ public class AdminFacade extends ClientFacade {
         return isLoggedIn = (email.equals(adminEmail) && password.equals(adminPassword));
     }
 
-    public Company addCompany(Company company) throws LoggedOutException, IllegalStateException {
-        if (!isLoggedIn) throw new LoggedOutException(LOGGED_OUT_MESSAGE);
+    public Company addCompany(Company company) throws IllegalStateException {
+//        if (!isLoggedIn) throw new LoggedOutException(LOGGED_OUT_MESSAGE);
         return companyDao.addCompany(
                 companyValidation.validateAttributes
                         .andThen(companyValidation.validateExistence)
@@ -117,8 +117,8 @@ public class AdminFacade extends ClientFacade {
         return company;
     }
 
-    public Customer addCustomer(Customer customer) throws LoggedOutException, IllegalStateException {
-        if (!isLoggedIn) throw new LoggedOutException(LOGGED_OUT_MESSAGE);
+    public Customer addCustomer(Customer customer) throws IllegalStateException {
+//        if (!isLoggedIn) throw new LoggedOutException(LOGGED_OUT_MESSAGE);
         return customerDao.addCustomer(
                 customerValidation
                         .validateAttributes.

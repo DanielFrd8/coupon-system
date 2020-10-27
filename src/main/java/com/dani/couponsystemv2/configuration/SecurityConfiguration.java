@@ -15,7 +15,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @AllArgsConstructor
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
@@ -41,12 +43,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .authorizeRequests().antMatchers(
                 "/customer/authenticate",
+                "/customer/login",
                 "/company/authenticate",
-                "/admin/authenticate"
+                "/company/login",
+                "/admin/authenticate",
+                "/admin/login",
+                "/admin/customer/add",
+                "/admin/company/add"
         ).permitAll()
-                .antMatchers("/customer/**").hasRole("CUSTOMER")
-                .antMatchers("/company/**").hasRole("COMPANY")
                 .antMatchers("/admin/**").hasRole("ADMIN")
+                .antMatchers("/company/**").hasRole("COMPANY")
+                .antMatchers("/customer/**").hasRole("CUSTOMER")
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

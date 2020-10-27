@@ -16,7 +16,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 
-
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/admin")
@@ -36,6 +35,7 @@ public class AdminController extends ClientController {
     }
 
     @PostMapping("/authenticate")
+    @Override
     public ResponseEntity<ResponseDto> authenticate(@RequestBody LoginDto loginDto) {
         try {
             authentication(loginDto);
@@ -55,6 +55,7 @@ public class AdminController extends ClientController {
     }
 
     @PostMapping("/login")
+    @Override
     public ResponseEntity login(@RequestBody LoginDto loginDto) {
         return facade.login(loginDto.getEmail(), loginDto.getPassword()) ?
                 ResponseEntity.ok(ResponseDto.success(true)) :
@@ -65,8 +66,8 @@ public class AdminController extends ClientController {
     public ResponseEntity addCompany(@RequestBody Company company) {
         try {
             return ResponseEntity.ok(ResponseDto.success(facade.addCompany(company)));
-        } catch (LoggedOutException e) {
-            return ResponseEntity.ok(ResponseDto.failure(e.getMessage()));
+//        } catch (LoggedOutException e) {
+//            return ResponseEntity.ok(ResponseDto.failure(e.getMessage()));
         } catch (IllegalStateException e) {
             return ResponseEntity.ok(ResponseDto.failure(e));
         }
@@ -131,8 +132,8 @@ public class AdminController extends ClientController {
     public ResponseEntity addCustomer(@RequestBody Customer customer) {
         try {
             return ResponseEntity.ok(ResponseDto.success(facade.addCustomer(customer)));
-        } catch (LoggedOutException e) {
-            return ResponseEntity.ok(ResponseDto.failure(e.getMessage()));
+//        } catch (LoggedOutException e) {
+//            return ResponseEntity.ok(ResponseDto.failure(e.getMessage()));
         } catch (IllegalStateException e) {
             return ResponseEntity.ok(ResponseDto.failure(e));
         }

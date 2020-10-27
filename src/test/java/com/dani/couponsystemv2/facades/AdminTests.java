@@ -60,8 +60,8 @@ class AdminTests {
                     "123123"
             ));
             System.out.println(added);
-        } catch (LoggedOutException e) {
-            e.printStackTrace();
+//        } catch (LoggedOutException e) {
+//            e.printStackTrace();
         } catch (IllegalStateException e) {
             Stream.of(e.getSuppressed())
                     .map(Throwable::getMessage)
@@ -126,8 +126,8 @@ class AdminTests {
                             "sonya@wins.com",
                             "123478"
                     )));
-        } catch (LoggedOutException e) {
-            e.printStackTrace();
+//        } catch (LoggedOutException e) {
+//            e.printStackTrace();
         } catch (IllegalStateException e) {
             Stream.of(e.getSuppressed())
                     .map(Throwable::getMessage)
