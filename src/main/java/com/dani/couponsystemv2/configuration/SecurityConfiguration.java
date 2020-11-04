@@ -31,9 +31,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth
-                .userDetailsService(customerDetailsService)
-                .and()
                 .userDetailsService(companyDetailsService)
+                .and()
+                .userDetailsService(customerDetailsService)
                 .and()
                 .userDetailsService(adminDetailsService);
     }
@@ -45,22 +45,23 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 "/customer/authenticate",
                 "/customer/login",
                 "/company/authenticate",
-                "/company/login",
                 "/admin/authenticate",
-                "/admin/login",
+                "/admin/login/**",
                 "/admin/customer/add",
                 "/admin/company/add"
         ).permitAll()
+                .antMatchers("/company/login").permitAll()
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/company/**").hasRole("COMPANY")
                 .antMatchers("/customer/**").hasRole("CUSTOMER")
                 .anyRequest().authenticated()
                 .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .cors();
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     }
-
 
     @Bean
     public PasswordEncoder getPasswordEncoder() {

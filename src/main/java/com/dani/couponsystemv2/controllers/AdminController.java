@@ -101,16 +101,6 @@ public class AdminController extends ClientController {
 
     @GetMapping("/company/get/{id}")
     public ResponseEntity getOneCompany(@PathVariable("id") Long id) {
-//        try {
-//            return facade.getOneCompany(id)
-//                    .map(company -> ResponseEntity.ok(ResponseDto.success(company)))
-//                    .orElseThrow(() ->
-//                            new DoesntExistException(
-//                                    "The company with id " + id + " does not exist"
-//                            ));
-//        } catch (LoggedOutException | DoesntExistException e) {
-//            return ResponseEntity.ok(ResponseDto.failure(e.getMessage()));
-//        }
         try {
             return ResponseEntity.ok(ResponseDto.success(facade.getOneCompany(id)));
         } catch (LoggedOutException | DoesntExistException e) {
@@ -132,8 +122,6 @@ public class AdminController extends ClientController {
     public ResponseEntity addCustomer(@RequestBody Customer customer) {
         try {
             return ResponseEntity.ok(ResponseDto.success(facade.addCustomer(customer)));
-//        } catch (LoggedOutException e) {
-//            return ResponseEntity.ok(ResponseDto.failure(e.getMessage()));
         } catch (IllegalStateException e) {
             return ResponseEntity.ok(ResponseDto.failure(e));
         }

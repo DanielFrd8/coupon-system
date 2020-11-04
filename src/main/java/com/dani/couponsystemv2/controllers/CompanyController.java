@@ -29,7 +29,7 @@ public class CompanyController extends ClientController {
 
     @PostMapping("/login")
     @Override
-    public ResponseEntity<ResponseDto> login(LoginDto loginDto) {
+    public ResponseEntity<ResponseDto> login(@RequestBody LoginDto loginDto) {
         return facade.login(loginDto.getEmail(), loginDto.getPassword()) ?
                 ResponseEntity.ok(ResponseDto.success(true)) :
                 ResponseEntity.ok(ResponseDto.failure("In order to continue, you must log in"));
@@ -37,7 +37,7 @@ public class CompanyController extends ClientController {
 
     @PostMapping("/authenticate")
     @Override
-    public ResponseEntity<ResponseDto> authenticate(LoginDto loginDto) {
+    public ResponseEntity<ResponseDto> authenticate(@RequestBody LoginDto loginDto) {
         try {
             authentication(loginDto);
 
