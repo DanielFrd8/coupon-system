@@ -12,11 +12,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class CompanyDetailsService implements UserDetailsService {
 
-    private final CompanyRepository repository;
+    private final CompanyRepository companyRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return repository.findByEmail(email)
+        return companyRepository.findByEmail(email)
                 .map(CompanyDetails::new)
                 .orElseThrow(() -> new UsernameNotFoundException(
                         "User by the email: " + email + " does not exists"

@@ -39,7 +39,7 @@ public class CompanyController extends ClientController {
     @Override
     public ResponseEntity<ResponseDto> authenticate(@RequestBody LoginDto loginDto) {
         try {
-            authentication(loginDto);
+            authentication(encryptLogin(loginDto));
 
         } catch (BadCredentialsException e) {
             return ResponseEntity
@@ -47,38 +47,45 @@ public class CompanyController extends ClientController {
                     .body(ResponseDto.failure(e.getMessage()));
         }
 
-        return ResponseEntity.ok(
-                ResponseDto.of(
-                        facade.login(loginDto.getEmail(), loginDto.getPassword()),
-                        jwtService.encodeCompany(
-                                new UserEntity(loginDto.getEmail(), loginDto.getPassword())
-                        )));
+        try {
+            return ResponseEntity.ok(
+                    ResponseDto.of(
+                            facade.login(loginDto.getEmail(), loginDto.getPassword()),
+                            jwtService.encodeCompany(
+                                    facade.getCompanyDetails()
+                            )));
+        } catch (LoggedOutException e) {
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body(ResponseDto.failure(e.getMessage()));
+        }
+
     }
 
     @PostMapping("/coupon/add/{category}")
-    public ResponseEntity addCoupon(@RequestBody Coupon coupon,@PathVariable("category") CategoryType category){
+    public ResponseEntity addCoupon(@RequestBody Coupon coupon, @PathVariable("category") CategoryType category) {
         try {
-            return ResponseEntity.ok(ResponseDto.success(facade.addCoupon(coupon,category)));
+            return ResponseEntity.ok(ResponseDto.success(facade.addCoupon(coupon, category)));
         } catch (LoggedOutException | DoesntExistException e) {
             return ResponseEntity.ok(ResponseDto.failure(e.getMessage()));
-        } catch (IllegalStateException e){
+        } catch (IllegalStateException e) {
             return ResponseEntity.ok(ResponseDto.failure(e));
         }
     }
 
     @PutMapping("/coupon/update")
-    public ResponseEntity updateCoupon(@RequestBody Coupon coupon){
+    public ResponseEntity updateCoupon(@RequestBody Coupon coupon) {
         try {
             return ResponseEntity.ok(ResponseDto.success(facade.updateCoupon(coupon)));
         } catch (LoggedOutException | DoesntExistException e) {
             return ResponseEntity.ok(ResponseDto.failure(e.getMessage()));
-        } catch (IllegalStateException e){
+        } catch (IllegalStateException e) {
             return ResponseEntity.ok(ResponseDto.failure(e));
         }
     }
 
     @DeleteMapping("/coupon/delete/{id}")
-    public ResponseEntity deleteCoupon(@PathVariable Long id){
+    public ResponseEntity deleteCoupon(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(ResponseDto.success(facade.deleteCoupon(id)));
         } catch (LoggedOutException | DoesntExistException e) {
@@ -87,14 +94,14 @@ public class CompanyController extends ClientController {
     }
 
     @GetMapping("/coupon/all")
-    public ResponseEntity getCoupons(@RequestParam(value = "maxPrice",required = false) Double maxPrice,
-                                     @RequestParam(value = "category", required = false) CategoryType type){
+    public ResponseEntity getCoupons(@RequestParam(value = "maxPrice", required = false) Double maxPrice,
+                                     @RequestParam(value = "category", required = false) CategoryType type) {
         try {
-            if (maxPrice != null){
+            if (maxPrice != null) {
                 return ResponseEntity.ok(ResponseDto.success(facade.getCompanyCoupons(maxPrice)));
-            }else if (type != null) {
+            } else if (type != null) {
                 return ResponseEntity.ok(ResponseDto.success(facade.getCompanyCoupons(type)));
-            }else{
+            } else {
                 return ResponseEntity.ok(ResponseDto.success(facade.getCompanyCoupons()));
             }
         } catch (LoggedOutException e) {
@@ -103,7 +110,7 @@ public class CompanyController extends ClientController {
     }
 
     @GetMapping("/details")
-    public ResponseEntity getCompanyDetails(){
+    public ResponseEntity getCompanyDetails() {
         try {
             return ResponseEntity.ok(ResponseDto.success(facade.getCompanyDetails()));
         } catch (LoggedOutException e) {

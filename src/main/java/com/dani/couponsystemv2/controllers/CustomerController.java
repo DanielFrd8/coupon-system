@@ -39,7 +39,7 @@ public class CustomerController extends ClientController {
     @Override
     public ResponseEntity<ResponseDto> authenticate(@RequestBody LoginDto loginDto) {
         try {
-            authentication(loginDto);
+            authentication(encryptLogin(loginDto));
 
         } catch (BadCredentialsException e) {
             return ResponseEntity
@@ -47,12 +47,18 @@ public class CustomerController extends ClientController {
                     .body(ResponseDto.failure(e.getMessage()));
         }
 
-        return ResponseEntity.ok(
-                ResponseDto.of(
-                        facade.login(loginDto.getEmail(), loginDto.getPassword()),
-                        jwtService.encodeCustomer(
-                                new UserEntity(loginDto.getEmail(), loginDto.getPassword())
-                        )));
+        try {
+            return ResponseEntity.ok(
+                    ResponseDto.of(
+                            facade.login(loginDto.getEmail(), loginDto.getPassword()),
+                            jwtService.encodeCustomer(
+                                    facade.getCustomerDetails()
+                            )));
+        } catch (LoggedOutException e) {
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body(ResponseDto.failure(e.getMessage()));
+        }
     }
 
     @PostMapping("/purchase")

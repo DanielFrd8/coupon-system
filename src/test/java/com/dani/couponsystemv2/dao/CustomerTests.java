@@ -26,7 +26,7 @@ class CustomerTests {
                 new Customer(
                         "bradley",
                         "peters",
-                        "bradley@Ppeters.com",
+                        "bradley@peters.com",
                         "l2323"
                 ), new Customer(
                         "herb",

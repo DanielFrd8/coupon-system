@@ -11,7 +11,7 @@ import java.util.Collection;
 @AllArgsConstructor
 public class CompanyDetails implements UserDetails {
 
-    private Company company;
+    private final Company company;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

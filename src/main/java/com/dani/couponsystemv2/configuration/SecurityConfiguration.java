@@ -41,16 +41,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
-                .authorizeRequests().antMatchers(
-                "/customer/authenticate",
-                "/customer/login",
-                "/company/authenticate",
-                "/admin/authenticate",
-                "/admin/login/**",
-                "/admin/customer/add",
-                "/admin/company/add"
-        ).permitAll()
-                .antMatchers("/company/login").permitAll()
+                .authorizeRequests()
+                .antMatchers(
+                        "/customer/authenticate",
+                        "/customer/login",
+                        "/company/authenticate",
+                        "/company/login",
+                        "/admin/authenticate",
+                        "/admin/login",
+                        "/admin/customer/add",
+                        "/admin/company/add")
+                .permitAll()
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/company/**").hasRole("COMPANY")
                 .antMatchers("/customer/**").hasRole("CUSTOMER")

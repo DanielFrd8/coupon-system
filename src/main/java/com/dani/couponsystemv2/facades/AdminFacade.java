@@ -58,7 +58,15 @@ public class AdminFacade extends ClientFacade {
         if (!isLoggedIn) throw new LoggedOutException(LOGGED_OUT_MESSAGE);
         return companyDao.updateCompany(company -> {
             company.setEmail(email);
-            company.setPassword(md5Hex(password));
+            companyDao.findById(companyId).map(comp -> comp.getPassword().equals(password)).ifPresent(
+                    isMatch -> {
+                        if (isMatch) {
+                            company.setPassword(password);
+                        } else {
+                            company.setPassword(md5Hex(password));
+                        }
+                    }
+            );
             return companyValidation.validateAttributes
                     .andThen(c -> {
                         try {
@@ -111,7 +119,7 @@ public class AdminFacade extends ClientFacade {
 
     public Company getOneCompany(Long id) throws LoggedOutException, DoesntExistException {
         if (!isLoggedIn) throw new LoggedOutException(LOGGED_OUT_MESSAGE);
-        Company company = companyDao.findById(id).orElseThrow(() -> new DoesntExistException( "The company with id " + id + " does not exist"));
+        Company company = companyDao.findById(id).orElseThrow(() -> new DoesntExistException("The company with id " + id + " does not exist"));
 //        company.getCoupons().forEach(coupon -> coupon.setCompany(null));
 //        company.getCoupons().forEach(coupon -> coupon.getCustomers().forEach(customer -> customer.setCoupons(null)));
         return company;
@@ -127,13 +135,20 @@ public class AdminFacade extends ClientFacade {
         );
     }
 
-    public Customer updateCustomer(Customer customer) throws LoggedOutException, IllegalStateException, DoesntExistException {
+    public Customer updateCustomer(Customer customer) throws
+            LoggedOutException, IllegalStateException, DoesntExistException {
         if (!isLoggedIn) throw new LoggedOutException(LOGGED_OUT_MESSAGE);
         return customerDao.updateCustomer(c -> {
-            c.setFirstName(customer.getFirstName());
-            c.setLastName(customer.getLastName());
             c.setEmail(customer.getEmail());
-            c.setPassword(md5Hex(customer.getPassword()));
+            customerDao.findById(customer.getId()).map(cust -> cust.getPassword().equals(customer.getPassword())).ifPresent(
+                    isMatch -> {
+                        if (isMatch) {
+                            c.setPassword(customer.getPassword());
+                        } else {
+                            c.setPassword(md5Hex(customer.getPassword()));
+                        }
+                    }
+            );
             return customerValidation
                     .validateAttributes
                     .andThen(cust -> {

@@ -21,7 +21,8 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
 
     boolean existsByEmail(String email);
 
-    Optional<Company> findByEmail(String email);
+    @Query("select c from Company c where c.email = :email")
+    Optional<Company> findByEmail(@Param("email") String email);
 
     @Override
     @Modifying

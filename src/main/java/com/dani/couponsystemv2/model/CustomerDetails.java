@@ -11,7 +11,7 @@ import java.util.Collection;
 @AllArgsConstructor
 public class CustomerDetails implements UserDetails {
 
-    private Customer customer;
+    private final Customer customer;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

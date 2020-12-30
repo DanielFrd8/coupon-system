@@ -29,6 +29,7 @@ public class JwtService {
     public static final String SCOPE = "scope";
     public static final String ID = "id";
     public static final String NAME = "name";
+    public static final String PASSWORD= "password";
 
     public Function<Claims, String> extractName = claims ->
             String.valueOf(claims.get(NAME));
@@ -55,7 +56,8 @@ public class JwtService {
         Map<String, Object> claims = Stream.of(
                 new AbstractMap.SimpleEntry<>(SCOPE, scope),
                 new AbstractMap.SimpleEntry<>(ID, subject.getId()),
-                new AbstractMap.SimpleEntry<>(NAME, subject.getEmail())
+                new AbstractMap.SimpleEntry<>(NAME, subject.getEmail()),
+                new AbstractMap.SimpleEntry<>(PASSWORD, subject.getPassword())
         ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         return Jwts.builder()

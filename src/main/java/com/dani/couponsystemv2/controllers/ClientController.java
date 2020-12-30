@@ -9,8 +9,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
-import java.util.function.Consumer;
-
 @AllArgsConstructor
 @Service
 public abstract class ClientController {
@@ -31,4 +29,9 @@ public abstract class ClientController {
 
     public abstract ResponseEntity<ResponseDto> authenticate(LoginDto loginDto);
 
+    public LoginDto encryptLogin(LoginDto loginDto){
+        LoginDto temp = new LoginDto(loginDto.getEmail(),loginDto.getPassword());
+        temp.encryptPassword();
+        return temp;
+    }
 }
